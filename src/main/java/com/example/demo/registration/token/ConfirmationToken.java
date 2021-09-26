@@ -36,11 +36,11 @@ public class ConfirmationToken {
     private LocalDateTime confirmedAt;
 
     @ManyToOne
-    @JoinColumn( // 1 user can have many confirmation tokens..
+    @JoinColumn(
             nullable = false,
             name = "app_user_id"
     )
-    private AppUser appUser;
+    private AppUser appUser; //  user can have many confirmation tokens..
 
     public ConfirmationToken(String token, LocalDateTime createdAt,
                              LocalDateTime expiresAt

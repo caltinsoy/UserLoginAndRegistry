@@ -23,7 +23,6 @@ public class RegistrationController {
 
     @GetMapping
     public List<AppUser> getAllUsers(){
-
         return registrationService.getAllUsers();
     }
 }

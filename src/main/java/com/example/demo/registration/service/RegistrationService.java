@@ -17,9 +17,9 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class RegistrationService {
+
     private final EmailValidator emailValidator;
     private final AppUserService appUserService;
-
     private final ConfirmationTokenService confirmationTokenService;
 
 

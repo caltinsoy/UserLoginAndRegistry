@@ -21,9 +21,7 @@ public class AppUserService implements UserDetailsService {
 
     private final static String USER_NOT_FOUND = "User with email %s not found";
     private final AppUserRepository appUserRepository;
-
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
@@ -38,25 +36,30 @@ public class AppUserService implements UserDetailsService {
         if (userExist) {
             throw new IllegalStateException("email already taken");
         }
-        String encodedPassword = bCryptPasswordEncoder.encode(appUser.getPassword());
-        appUser.setPassword(encodedPassword);
-
+        setEncodePassword(appUser);
         appUserRepository.save(appUser);
 
 
-        String token = UUID.randomUUID().toString(); // Send Confirmation Token...
-        ConfirmationToken confirmationToken =
-                new ConfirmationToken(
-                        token,
-                        LocalDateTime.now(),
-                        LocalDateTime.now().plusMinutes(15),
-                        appUser
-                );
+        ConfirmationToken confirmationToken = getConfirmationToken(appUser);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
 
-        //TODO SEND EMAIL
+        return confirmationToken.getToken();
+    }
 
-        return token;
+    private void setEncodePassword(AppUser appUser) {
+        String encodedPassword = bCryptPasswordEncoder.encode(appUser.getPassword());
+        appUser.setPassword(encodedPassword);
+    }
+
+
+    private ConfirmationToken getConfirmationToken(AppUser appUser) {
+        String token = UUID.randomUUID().toString();
+        return new ConfirmationToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15),
+                appUser
+        );
     }
 
     public List<AppUser> getAllUsers() {
